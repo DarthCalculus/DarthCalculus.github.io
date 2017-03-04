@@ -9,7 +9,7 @@ board.height = windowHeight*0.8;
 board.width = board.height;
 
 var gameSize = 10;
-var SIZE = board.height/(gameSize+2);
+var SIZE; 
 
 var game = [];
 
@@ -17,9 +17,11 @@ var player;
 var playerStart;
 var path;
 var score;
-var highscore = 0;
+var highscore = new Array(100);
+highscore.fill(0);
 
 function initGame() {
+	SIZE = board.height/(gameSize+2);
 	game = [];
 	score = 0;
 	path = [];
@@ -73,7 +75,7 @@ function drawPlayer(x,y) {
 	ctx.save();
 	ctx.beginPath();
 	ctx.fillStyle = "blue";
-	ctx.arc(SIZE*(x+.5), board.height - SIZE*(y+0.5), 10, 0, 2 * Math.PI);
+	ctx.arc(SIZE*(x+.5), board.height - SIZE*(y+0.5), SIZE/4, 0, 2 * Math.PI);
 	ctx.fill();
 	ctx.restore();
 }
@@ -142,6 +144,7 @@ function draw() {
 
 
 window.onkeyup = function(event) { 
+	document.getElementById("hideme").style.display = "none";
 	var key = event.keyCode;
 	console.log(key);
 	if (key < 41 && key > 36) {
@@ -161,8 +164,8 @@ window.onkeyup = function(event) {
 		path.push(key);
 		score += 1;
 		document.getElementById("score").innerHTML = "Score: " + score;
-		if (score > highscore) {
-			highscore = score;
+		if (score > highscore[gameSize]) {
+			highscore[gameSize] = score;
 			document.getElementById("best").innerHTML = "Best: " + score;
 
 		}
@@ -177,8 +180,13 @@ window.onkeyup = function(event) {
 
 
 document.getElementById("newGame").onclick = function(){
+	var newSize = Number(document.getElementById("size").value);
+	if (newSize < 100 && newSize >= 2) {
+		gameSize = Math.floor(newSize);
+	}
 	initGame();
-	document.getElementById("score").innerHTML = "Score: 0"
+	document.getElementById("score").innerHTML = "Score: 0";
+	document.getElementById("best").innerHTML = "Best: " + highscore[gameSize];
 };
 
 window.onload = initGame;

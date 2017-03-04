@@ -1,0 +1,22 @@
+<html>
+<body>
+<div class = "left">
+<p id = "hello"> JURJS GAME </p>
+<p id = "hideme"> Move with the arrow keys </p>
+<p id = "score">Score: 0</p>
+<p id = "best">Best: 0</p>
+<button id = "newGame"> New Map (r) </button>
+<br>
+<br>
+Grid Size: 
+<br>
+<input id = "size" value = "10" size = "5">
+</div>
+
+<canvas id = "canvas" class = "canv"></canvas>
+<link rel="stylesheet" href="style.css">
+<script src="main.js"></script>
+
+
+</body>
+</html>
