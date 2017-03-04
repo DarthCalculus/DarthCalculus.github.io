@@ -145,6 +145,7 @@ window.onkeyup = function(event) {
 	var key = event.keyCode;
 	console.log(key);
 	if (key < 41 && key > 36) {
+		document.getElementById("hideme").style.visibility = "hidden";
 		var dx = 0;
 		var dy = 0;
 		if (key == 37) dx= -1;
