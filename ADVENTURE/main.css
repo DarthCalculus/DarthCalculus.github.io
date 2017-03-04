@@ -1,0 +1,16 @@
+#canvas {
+	border: 2px solid black;
+}
+#container {
+	position: absolute;
+	top: 90;
+	left: 300;
+	width: 200px;
+}
+textarea {
+   text-transform: uppercase;
+}
+
+#length {
+	width: 30px;
+}
