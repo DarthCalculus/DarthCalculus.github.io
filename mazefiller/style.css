@@ -1,0 +1,8 @@
+.canv {
+	border: 5px solid red;
+	margin: auto;
+	display: block;
+}
+.left {
+	float: left;
+}
