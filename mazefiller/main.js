@@ -15,6 +15,7 @@ var game = [];
 
 var player;
 var playerStart;
+var canMoveStart;
 var path;
 var score;
 var highscore = new Array(100);
@@ -27,6 +28,7 @@ function initGame() {
 	path = [];
 	player = {}
 	playerStart = {}
+	canMoveStart = true;
 
 
 	var dum = new Array(gameSize+2);
@@ -142,12 +144,24 @@ function draw() {
 	drawPlayer(player.x,player.y);
 }
 
+var shiftDown = false;
+
+window.onkeydown = function(event) { 
+	var key = event.keyCode;
+	if (key == 16) {
+		shiftDown  = true;
+	}
+};
 
 window.onkeyup = function(event) { 
-	document.getElementById("hideme").style.display = "none";
 	var key = event.keyCode;
 	console.log(key);
+	if (key == 16) {
+		shiftDown = false;
+	}
 	if (key < 41 && key > 36) {
+		document.getElementById("hideme").style.display = "none";
+
 		var dx = 0;
 		var dy = 0;
 		if (key == 37) dx= -1;
@@ -159,15 +173,24 @@ window.onkeyup = function(event) {
 		if (game[newx][newy] != 1) {
 			return;
 		}
-		game[player.x][player.y] = 2;
-		player = {x:newx,y:newy};
-		path.push(key);
-		score += 1;
-		document.getElementById("score").innerHTML = "Score: " + score;
-		if (score > highscore[gameSize]) {
-			highscore[gameSize] = score;
-			document.getElementById("best").innerHTML = "Best: " + score;
+		console.log(canMoveStart);
+		console.log(shiftDown);
+		if (shiftDown && canMoveStart) {
+			player = {x:newx,y:newy};
+			playerStart = {x:newx,y:newy};
+		}
+		else {
+			canMoveStart = false;
+			game[player.x][player.y] = 2;
+			player = {x:newx,y:newy};
+			path.push(key);
+			score += 1;
+			document.getElementById("score").innerHTML = "Score: " + score;
+			if (score > highscore[gameSize]) {
+				highscore[gameSize] = score;
+				document.getElementById("best").innerHTML = "Best: " + score;
 
+			}
 		}
 
 		draw();
