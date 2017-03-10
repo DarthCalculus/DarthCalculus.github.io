@@ -21,51 +21,6 @@ var score;
 var highscore = new Array(100);
 highscore.fill(0);
 
-function initGame() {
-	SIZE = board.height/(gameSize+2);
-	game = [];
-	score = 0;
-	path = [];
-	player = {}
-	playerStart = {}
-	canMoveStart = true;
-
-
-	var dum = new Array(gameSize+2);
-	dum.fill(0);
-	var dummy = new Array(gameSize+2);
-	dummy.fill(1);
-	dummy[0] = 0;
-	dummy[gameSize+1] = 0;
-	game = [dum.slice()];
-	for (var i = 0; i < gameSize; i++) {
-		game.push(dummy.slice());
-	}
-	game.push(dum.slice());
-
-
-	var count = 0;
-	while (count < gameSize*gameSize/3) {
-		var x = Math.ceil(Math.random()*gameSize);
-		var y = Math.ceil(Math.random()*gameSize);
-		if (game[x][y] == 1) {
-			count += 1;
-		}
-		game[x][y] = 0;
-	}
-	while (true) {
-		var x = Math.ceil(Math.random()*gameSize);
-		var y = Math.ceil(Math.random()*gameSize);
-		if (game[x][y] == 1) {
-			player = {x:x,y:y};
-			playerStart = {x:x,y:y};
-			break;
-		}
-	}
-	draw();
-
-}
-
 
 function fillSquare(color,x,y) { // x and y are in game coords
 	ctx.save();
@@ -201,7 +156,6 @@ window.onkeyup = function(event) {
 
 };
 
-
 document.getElementById("newGame").onclick = function(){
 	var newSize = Number(document.getElementById("size").value);
 	if (newSize < 100 && newSize >= 2) {
@@ -211,5 +165,78 @@ document.getElementById("newGame").onclick = function(){
 	document.getElementById("score").innerHTML = "Score: 0";
 	document.getElementById("best").innerHTML = "Best: " + highscore[gameSize];
 };
+
+var dirs = [{x:0,y:1},{x:0,y:-1},{x:1,y:0},{x:-1,y:0}];
+
+function sizeOfComponent(grid, start) {
+	var copy = grid.map(function(arr) {
+    	return arr.slice();
+	});
+
+	return sizeOfComponentHelper(copy,start.x,start.y);
+}
+function sizeOfComponentHelper(grid, x, y) {
+	if (grid[x][y] == 0) {
+		return 0;
+	}
+	var sum = 1;
+	grid[x][y] = 0;
+	for (var i = 0; i < 4; i++) {
+		sum += sizeOfComponentHelper(grid, x + dirs[i].x, y + dirs[i].y);
+	}
+	return sum;
+}
+
+function initGame() {
+	SIZE = board.height/(gameSize+2);
+	score = 0;
+	path = [];
+	player = {}
+	playerStart = {}
+	canMoveStart = true;
+
+
+	while (true) {
+		game = [];
+		var dum = new Array(gameSize+2);
+		dum.fill(0);
+		var dummy = new Array(gameSize+2);
+		dummy.fill(1);
+		dummy[0] = 0;
+		dummy[gameSize+1] = 0;
+		game = [dum.slice()];
+		for (var i = 0; i < gameSize; i++) {
+			game.push(dummy.slice());
+		}
+		game.push(dum.slice());
+		var count = 0;
+		while (count < gameSize*gameSize/3) {
+			var x = Math.ceil(Math.random()*gameSize);
+			var y = Math.ceil(Math.random()*gameSize);
+			if (game[x][y] == 1) {
+				count += 1;
+			}
+			game[x][y] = 0;
+		}
+
+		while (true) {
+			var x = Math.ceil(Math.random()*gameSize);
+			var y = Math.ceil(Math.random()*gameSize);
+			if (game[x][y] == 1) {
+				player = {x:x,y:y};
+				playerStart = {x:x,y:y};
+				break;
+			}
+		}
+		if (sizeOfComponent(game,player) >= gameSize*gameSize*6/10) {
+			break;
+		}
+	}
+
+	console.log(sizeOfComponent(game,player));
+
+	draw();
+
+}
 
 window.onload = initGame;
