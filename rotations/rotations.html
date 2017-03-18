@@ -1,0 +1,47 @@
+<html>
+<body>
+
+<h1> Rotations </h1>
+<br>
+
+
+<div id = "container">
+
+<canvas id = "canvas" class = "canv" width="800" height="800"></canvas>
+<canvas id = "canvas2" class = "canv" width="800" height="800" hidden></canvas>
+
+</div>
+
+Ratio: <input id = "ratio"></input><br> CF: <input id = "cf"></input><br>
+Starting point: X <input id = "startx"></input> Y <input id = "starty"></input><br>
+Zoom: <input id = "zoom"></input><br>
+Timeout: <input id = "timeout"></input><br>
+
+<button id = "apply">Apply</button><br>
+<button id = "zoomout">Zoom Out</button><br>
+
+Show Maximal Tiles: <br>
+ <input type="radio" name="regions" id = "regOn" value="On" checked> On<br>
+ <input type="radio" name="regions" id = "regOff" value="Off"> Off <br>
+ Show Path: <br>
+ <input type="radio" name="path" id = "pathOn" value="On"> On<br>
+ <input type="radio" name="path" id = "pathOff" value="Off" checked> Off <br>
+ Show Ideal Grid: <br>
+ <input type="radio" name="ideal" id = "idealOn" value="On"> On<br>
+ <input type="radio" name="ideal" id = "idealOff" value="Off" checked> Off <br>
+Show Dots: <br>
+ <input type="radio" name="dots" id = "dotsOn" value="On"> On<br>
+ <input type="radio" name="dots" id = "dotsOff" value="Off" checked> Off <br>
+
+
+<p id = "message"></p>
+
+<script src="jquery-2.1.1.js"></script>
+<script src="main.js"></script>
+<script src="graphics.js"></script>
+<script src="hyperbolic.js"></script>
+
+<link rel="stylesheet" href="main.css">
+
+</body>
+</html>

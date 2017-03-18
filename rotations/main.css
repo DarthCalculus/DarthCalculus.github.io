@@ -1,0 +1,8 @@
+.canv {
+	border: 2px solid black;
+	float: left;
+}
+
+#container {
+	float: left;
+}
