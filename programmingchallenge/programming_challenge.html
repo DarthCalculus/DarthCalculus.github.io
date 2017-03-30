@@ -1,0 +1,64 @@
+<html>
+<body>
+
+
+<div id = "sidebar">
+<fieldset id = "instruct">
+<h3> Syntax: </h3>
+<ul>
+<li> + Increment highlighted Value
+<li> - Decrement highlighted Value
+<li> &gt; Move Pointer Right
+<li> &lt; Move Pointer Left
+<li> [ Begin Loop
+<li> ] Go to the correspoding begin statement if the highlighted value is not 0
+</ul>
+<p> In addition, for debugging, you can use </p>
+<ul>
+<li> . to print the current cell and value.
+<li> # to comment an entire line.
+</ul>
+<p> Other characters are ignored</p>
+</fieldset>
+
+<fieldset id = "challenge">
+<h3> Challenges: </h3>
+<ol>
+<li> Obtain 15 using 14 characters
+<li> Put 10 in each cell using 40 characters
+<li> How big of a number can you get using 30 characters?
+</ol>
+<p> BONUS CHALLENGE: Obtain 16 using 13 characters </p>
+<p> Tips: </p>
+<p> Try moving left when at the leftmost box.
+No negative numbers supported!
+
+</fieldset>
+
+<fieldset id = "credit">
+<p> Created by George Spahn </p>
+<p> Based on Brainfuck by Urban Muller </p>
+</fieldset>
+</div>
+
+<div id = "content">
+
+<h1> PROGRAMMING CHALLENGE </h1>
+<br>
+<textarea id = "code" placeholder = "Enter Code Here"></textarea><br><br>
+<button id = "execute">Execute Code</button>
+<button id = "clear">Clear Output</button>
+<div id = "chars"></div>
+<br><br>
+<table><tr id = "row">
+</tr></table>
+<div id = "output"></div>
+
+</div>
+
+<script src="jquery-2.1.1.js"></script>
+<script src="main.js"></script>
+<link rel="stylesheet" href="main.css">
+
+</body>
+</html>

@@ -91,6 +91,12 @@ function draw() {
 			if( game[i][j] == 2) {
 				color = "white";
 			}
+			if( game[i][j] == 3) {
+				color = "orange";
+			}
+			if( game[i][j] == 4) {
+				color = "red";
+			}
 			fillSquare(color,i,j);
 		}
 	}
@@ -110,7 +116,7 @@ window.onkeydown = function(event) {
 
 window.onkeyup = function(event) { 
 	var key = event.keyCode;
-	console.log(key);
+	//console.log(key);
 	if (key == 16) {
 		shiftDown = false;
 	}
@@ -125,11 +131,10 @@ window.onkeyup = function(event) {
 		if (key == 40) dy= -1;
 		var newx = player.x + dx;
 		var newy = player.y + dy;
-		if (game[newx][newy] != 1) {
+		if (game[newx][newy] == 0 || game[newx][newy] == 2) {
 			return;
 		}
-		console.log(canMoveStart);
-		console.log(shiftDown);
+	
 		if (shiftDown && canMoveStart) {
 			player = {x:newx,y:newy};
 			playerStart = {x:newx,y:newy};
@@ -168,11 +173,136 @@ document.getElementById("newGame").onclick = function(){
 
 var dirs = [{x:0,y:1},{x:0,y:-1},{x:1,y:0},{x:-1,y:0}];
 
-function sizeOfComponent(grid, start) {
-	var copy = grid.map(function(arr) {
+function copyOf(grid) {
+	return grid.map(function(arr) {
     	return arr.slice();
 	});
+}
 
+function dist(grid, p1, p2) {
+	var copy = copyOf(grid);
+	if (p1.x == p2.x && p1.y == p2.y) return 0;
+	copy[p1.x][p1.y] = 0;
+	var current = [p1];
+	var next = [];
+	var distance = 0;
+	var answer = 0;
+	while (true) {
+		distance += 1;
+		current.forEach(function(p) {
+    		dirs.forEach(function(d) {
+    			var newx = p.x+d.x;
+    			var newy = p.y+d.y;
+    			if (copy[newx][newy] != 0) {
+    				if (newx == p2.x && newy == p2.y) {
+    					answer = distance;
+    				}
+    				copy[newx][newy] = 0;
+    				next.push({x:newx, y:newy});
+    			}
+			});
+		});
+		if (answer != 0) return answer;
+		if (next.length == 0) return -1;
+		current = next;
+		next = [];
+	}
+}
+
+function showCutPoints(grid, start) {
+	var copy = copyOf(grid);
+	var comp = sizeOfComponent(copy, start);
+	for (var i = 1; i <= gameSize; i++) {
+		for (var j = 1; j <= gameSize; j++) {
+			if (copy[i][j] == 0) continue;
+			if (i == start.x && j == start.y) continue;
+			copy[i][j] = 0;
+			newcomp = sizeOfComponent(copy, start);
+			if (newcomp < comp - 1) {
+				grid[i][j] = 3;
+			}
+			if (newcomp < comp - 10) {
+				//grid[i][j] = 4;
+			}
+			copy[i][j] = 1;
+		}
+	}
+	/*
+	for (var i = 1; i <= gameSize; i++) {
+		for (var j = 1; j <= gameSize; j++) {
+			if (grid[i][j] == 3) {
+				var d = dist(grid, start, {x:i,y:j});
+
+				var best = {x:i,y:j};
+				
+				dirs.forEach(function(d) {
+					var newx = i+d.x;
+	    			var newy = j+d.y;
+	    			var newd = dist(grid,start,{x:newx,y:newy});
+	    			if (newd < d) {
+	    				grid[newx][newy] = 1;
+	    			}
+	    			else {
+	    				d = newd;
+	    				grid[best.x][best.y] = 1;
+	    				best = {x:newx,y:newy};
+	    			}
+				});
+			}
+		}
+	}*/
+		
+}
+
+function getKey(dir) {
+	if (dir.x == -1) return 37;
+	if (dir.x == 1) return 39;
+	if (dir.y == -1) return 40;
+	if (dir.y == 1) return 38;
+}
+
+function bruteForce(grid, start, end) {
+	var grid = copyOf(grid);
+	var curPath = [];
+	var bestPath = [];
+	var curX = start.x;
+	var curY = start.y;
+	function bruteForceHelper() {
+		if (end != undefined) {
+			if (curX == end.x && curY == end.y) {
+	    		if (curPath.length > bestPath.length) {
+	    			bestPath = curPath.slice();
+	   			}
+	   			return;
+	    	}
+	    }
+	    else {
+	    	if (curPath.length > bestPath.length) {
+	    		bestPath = curPath.slice();
+	   		}
+	    }
+		grid[curX][curY] = 0;
+		for (var i = 0; i < 4; i++) {
+			
+	    	if (grid[curX+dirs[i].x][curY+dirs[i].y] != 0) {
+	    		curPath.push(getKey(dirs[i]));
+	    		curX += dirs[i].x;
+	    		curY += dirs[i].y;
+	    		bruteForceHelper();
+	    		curX -= dirs[i].x;
+	    		curY -= dirs[i].y;
+	    		curPath.pop();
+	    	}
+	    }
+	    grid[curX][curY] = 1;
+	}
+	bruteForceHelper();
+	path = bestPath;
+	console.log("Best:",bestPath.length);
+}
+
+function sizeOfComponent(grid, start) {
+	var copy = copyOf(grid);
 	return sizeOfComponentHelper(copy,start.x,start.y);
 }
 function sizeOfComponentHelper(grid, x, y) {
@@ -233,8 +363,10 @@ function initGame() {
 		}
 	}
 
-	console.log(sizeOfComponent(game,player));
-
+	//console.log(sizeOfComponent(game,player));
+	showCutPoints(game,player);
+	//console.log(dist(game, player, {x:player.x,y:player.y+5}));
+	bruteForce(game,player);
 	draw();
 
 }
