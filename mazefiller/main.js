@@ -364,9 +364,9 @@ function initGame() {
 	}
 
 	//console.log(sizeOfComponent(game,player));
-	showCutPoints(game,player);
+	//showCutPoints(game,player);
 	//console.log(dist(game, player, {x:player.x,y:player.y+5}));
-	bruteForce(game,player);
+	//bruteForce(game,player);
 	draw();
 
 }
