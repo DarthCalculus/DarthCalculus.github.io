@@ -207,8 +207,8 @@ function setup_perm() {
 	var x
 	var HTML  = "["
 	for (x = 0; x < perm.length; x++) {
-		HTML += "<span id = \"s"+(2*x)+"\">"+perm[x]+"</span><span id = \"s"+
-								(2*x+1)+"\">"
+		HTML += "<span id = \"s"+(2*x)+"\" class = \"num\">"+perm[x]+"</span><span id = \"s"+
+								(2*x+1)+"\" class = \"num\">"
 		if (x != perm.length -1) 
 			HTML += ", </span>"
 		else 
@@ -301,9 +301,9 @@ function update(){
 			cdr_hover(x)
 		}
 		button.onmouseout = function(){
-			var elements = document.querySelectorAll("span");
+			var elements = document.getElementsByClassName("num");
     		for (var i = 0; i < elements.length; i++) {
-        		elements[i].style.backgroundColor = "";
+        		elements[i].style.background = "";
     		}
 		}
 		cdr_buttons.appendChild(button)
@@ -319,9 +319,9 @@ function update(){
 			cds_hover(x)
 		}
 		button.onmouseout = function(){
-			var elements = document.querySelectorAll("span");
+			var elements = document.getElementsByClassName("num");
     		for (var i = 0; i < elements.length; i++) {
-        		elements[i].style.backgroundColor = "";
+        		elements[i].style.background = "";
     		}
 		}
 		cds_buttons.appendChild(button)
@@ -331,10 +331,10 @@ function update(){
 
 }
 
-function generatePerm(){
+function randomPerm(){
 	perm = []
 	var i
-	for (i = 1; i < 10; i++) 
+	for (i = 1; i <= document.getElementById("length").value; i++) 
 		perm.push(i)
 
 	perm.sort(function(a, b){return 0.5 - Math.random()})
@@ -342,6 +342,8 @@ function generatePerm(){
 	perm = perm.map(function(x){
 		return x*(Math.floor(Math.random()*2)*2-1)
 	})
+}
+function generatePerm() {
 	original = perm.slice()
 
 	var cycle = strategic_cycle(perm)
@@ -356,7 +358,8 @@ function generatePerm(){
 					" you will get one of the following possibilities:<br>" 
 		var x
 		for (x = 1; cycle[x] != 0; x++) {
-			message += "["+ terminal_point(cycle[x],n).join(", ") + "]<br>"
+			message += "<span id = \"t"+x+"\">["+ terminal_point(cycle[x],n).join(", ") + 
+							"]</span><br>"
 		}
 	}
 	else {
@@ -364,17 +367,46 @@ function generatePerm(){
 					" you will get ["+terminal_point(n,n).join(", ") + "]"
 	}
 	document.getElementById("info").innerHTML = message
+	if (cycle.includes(0)) {
+		var x
+		for (x = 1; cycle[x] != 0; x++) {
+			
+			document.getElementById("t"+x).onclick = (function() {
+    			var j = x; 
+    			return function() {
+    				var term = document.getElementById("t"+j)
+    				if (term.style.background != "red")
+      					term.style.background = "red"
+      				else 
+      					term.style.background = "orange"
+   				 }
+  			})() 
+		}
+	}
 }
 
+
+
+
+
 function init() {
+	randomPerm()
 	generatePerm()
 	update()
 	document.getElementById("new").onclick = function(){
+		randomPerm()
 		generatePerm()
 		update()
 	}
 	document.getElementById("reset").onclick = function(){
 		perm = original
+		update()
+	}
+	document.getElementById("set").onclick = function(){
+		perm = document.getElementById("input_perm").value.split(" ").map(function(x){
+			return Number(x)
+		})
+		generatePerm()
 		update()
 	}
 }
