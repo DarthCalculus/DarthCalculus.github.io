@@ -1,0 +1,53 @@
+<html>
+<body>
+<div class = "left">
+<p id = "hello"> MAZE FILLER + </p>
+<p id = "hideme"> Move with the arrow keys </p>
+<p id = "gold">Gold: 0</p>
+
+<div id = "bombs">
+  Bombs: 0
+</div>
+  <button id = "use">
+    Use (u)
+  </button>
+  <br>
+  <button id = "reset"> Rewind (z) </button>
+  <br>
+<br>
+<button id = "newGame"> New Map (r) </button>
+<br>
+<br>
+
+<br>
+<div id = "shop">
+  Welcome to the bomb shop. <br>
+  Bombs destroy a gray tile <br>
+  in front of you! Buy one? <br><br>
+  <button id = "bomb"> Buy Bomb 8 gold (b) </button> <br>
+  <button id = "advice"> Buy Advice 3 gold (a) </button> <br>
+  <p id = "hint">
+    The exit of this cavern <br>
+    is to the <span id = "answer" >EAST</span> of here. <br>
+    The path caved in though <br>
+    so you better bring a <br>
+    lot of bombs!
+  </p>
+</div>
+
+<div id = "end">
+  Congratulations! <br>
+  You escaped with <span id = "spare"> 0 </span><br>
+  bombs to spare!
+
+</div>
+
+
+</div>
+<canvas id = "canvas" class = "canv"></canvas>
+<link rel="stylesheet" href="style.css">
+<script src="main.js"></script>
+
+
+</body>
+</html>
