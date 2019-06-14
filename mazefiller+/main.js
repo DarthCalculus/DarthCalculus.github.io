@@ -432,7 +432,8 @@ window.onkeyup = function(event) {
 		draw();
 		if ((world.loc.x - 1) % (world.roomSize + 1) == 0 ||
 				(world.loc.y - 1) % (world.roomSize + 1) == 0) {
-			save = produceCopy(world);
+			if (world.endPhase == false)
+				save = produceCopy(world);
 		}
 	}
 	if (key == 82) {
