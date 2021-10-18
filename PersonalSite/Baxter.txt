@@ -1,0 +1,198 @@
+with(combinat):
+
+printf("For Information on the number of Baxter matrices with a fixed number of rows, use BaxterFixedRows(r), where r is the number of rows"):
+printf("\nTry BaxterFixedRows(3)"):
+printf("\nRuntime is fast for r<=5, ~2 mins for r=6, and very long for r>=7"):
+printf("\nFor r <= 6, the number of r by k Baxter matrices eventually satisfies a polynomial in k of degree 2r-2"):
+printf("\nI conjecture this happens for all r"): 
+
+
+BaxterFixedRows := proc(r)
+local f,g,d,f2,g2,d2,g3:
+	f:=gen_fun(r,true):
+	g:=simplify(coeff(op(1,convert(rem(numer(f),denom(f),x)/denom(f),FormalPowerSeries,x)),x^k)):
+	#d:=degree(quo(numer(f),denom(f),x)):
+	
+
+	printf("The sequence counting the number of Baxter Matrices of size %2d by k, has the generating function",r):
+	f2:= subs(y=1,f):
+	g2:=subs(y=1,g):
+	d2:=degree(quo(numer(f2),denom(f2),x)):
+	print(f2):
+	printf("The first 10 terms are:"):
+	print(seq(coeff(taylor(f2,x=0,11),x^i),i=1..10)):
+	printf("for k > %2d, this is given by the formula",d2):
+	
+	print(g2):
+	printf("Now counting weight:\n"):
+	printf("The generating function where the coefficient of x^k * y^j gives the number of matrices with k columns and j ones is given by:"):
+
+	print (f):
+	printf ("The coefficient of x^k is given by:"):
+	g3:=collect(coeff(g,(1/y)^(-k)),y)*y^k:
+	print(g3):
+	printf( "The max weight of a k column matrix"):
+	degree(coeff(g,(1/y)^(-k)),y)+k:
+	
+end:
+
+
+#FOR EACH ROW
+# 1 -- There was a 1 here most recently 
+# 2 -- This row is all zeroes
+# 3 -- This row must be zeroes in the future
+# 4 -- None of the above
+
+
+gen_fun := proc(r,weighted)
+local mynodes,eqs,n1,n2,c,ids,foo,s,data,fs,wt:
+
+	mynodes := create_states(r):
+	eqs := {}:
+	
+	data := []:
+	for n1 from 1 to nops(mynodes) do
+		data:=[op(data),forward_transitions(mynodes,n1)]:
+	od:
+	
+	for n1 from 1 to nops(mynodes) do
+		
+		ids := []:
+		for n2 from 1 to nops(mynodes) do
+		
+			for c in data[n2] do
+				if n1 = c[1] then
+					ids:=[op(ids),[n2,c[2]]]:
+					break:
+				fi:
+			od:
+		od:
+		
+		fs:=1:
+		if (3 in mynodes[n1] or 4 in mynodes[n1]) then 	
+			fs:=0:
+		fi: 
+		wt:=numboccur(mynodes[n1],1):
+		if weighted then
+			eqs := eqs union {x[n1] = x*y^wt*fs+add(x*y^i[2]*x[i[1]], i in ids) }:
+		else 
+			eqs := eqs union {x[n1] = x*(fs+add(x[i[1]], i in ids)) }:
+		fi:
+	od:
+	
+	foo:=solve(eqs,{seq(x[i],i=1..nops(mynodes))}):
+	s := 0:
+	for n1 from 1 to nops(mynodes) do
+		if not 2 in mynodes[n1] then 
+			s:=s+rhs(foo[n1]):
+		fi:
+	od:
+	simplify(s):
+	
+end:
+
+
+create_states:=proc(r)
+local states,T,c: 
+	states:=[]:
+	T:=cartprod([seq([seq(i,i=1..4)],j=1..r)]):
+	while not T[finished] do 
+		c:=T[nextvalue]() :
+		if 1 in c then
+			states:=[op(states),c]:
+		fi:
+	od:	
+	states:
+end:
+
+forward_transitions:= proc(states,i) 
+local s,state,r,x,new,t1,t2,t3,t4,toRet,ok,symbols:
+	state:= states[i]:
+	r:=nops(state):
+	symbols := powerset(r):
+	toRet := []:
+	for s in symbols do:
+		ok := true:
+	
+		new:=[0$r]:
+	
+		# FOR EACH 3, make sure zero is present
+		for x from 1 to r do
+			if state[x] = 3 then 
+				if x in s then 
+					ok:=false:
+					break:
+				fi:
+				new[x]:=3:
+			fi:
+		od:
+		if not ok then:
+			next:
+		fi:
+		
+		t3 := min(s)-1:
+		t4 := max(s)+1:
+		
+		t1:=0:
+		for x from 1 to r do
+			if state[x] = 1 then 
+				t1:=x-1:
+				break:
+			fi:
+		od:
+		t2:=0:
+		for x from r to 1 by -1 do
+			if state[x] = 1 then 
+				t2:=x+1:
+				break:
+			fi:
+		od:	
+		
+		
+		for x from 1 to r-1 do
+			if state[x] = 2 or t3 >= x or t2 <= x+1 then 
+				
+			elif x+1 in s or state[x+1]=2 then  
+				ok := false:
+				break:
+			else 
+				new[x+1] := 3:
+			fi:
+			if state[x+1] = 2 or t1 >= x or t4 <= x+1 then 
+				
+			elif x in s or state[x]=2 then  
+				ok := false:
+				break:
+			else 
+				new[x] := 3:
+			fi:
+		
+		od:
+		
+		if not ok then:
+			next:
+		fi:
+		
+		for x from 1 to r do
+			if new[x]=0 then
+				if x in s then 
+					new[x]:=1:
+				elif state[x]=2 then
+					new[x]:=2:
+				else
+					new[x]:=4:
+				fi:
+				
+			fi:
+		od:
+		
+		for x from 1 to nops(states) do
+			if states[x] = new then
+				toRet:=[op(toRet),[x,nops(s)]]:
+				break:
+			fi:
+		od:
+				
+	od:
+	toRet:
+end:
